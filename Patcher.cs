@@ -23,7 +23,6 @@ namespace TollPriceIncreaserMod
             patched = true;
             Debug.Log("TollPriceIncreaser Patching");
             var harmony = new Harmony(HarmonyId);
-            // harmony.PatchAll(typeof(Patcher).GetType().Assembly); // you can also do manual patching here!
             harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
 
@@ -42,7 +41,6 @@ namespace TollPriceIncreaserMod
     {
         public static bool Prefix(ref int __result, ushort buildingID, ref Building data)
         {
-            //UnityEngine.Debug.Log("CreateRelay Prefix");
             __result = data.m_education1;
             return false;
         }
@@ -54,7 +52,6 @@ namespace TollPriceIncreaserMod
         public static bool Prefix(ushort buildingID, ref Building data, int price)
         {
             data.m_education1 = (byte)Mathf.Clamp(price, 0, 255);
-            //Debug.Log("Set Toll Price: "+ data.m_education1);
             return false;
         }
     }
