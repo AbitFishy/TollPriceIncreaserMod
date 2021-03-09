@@ -23,7 +23,7 @@ namespace TollPriceIncreaserMod
             patched = true;
             Debug.Log("TollPriceIncreaser Patching");
             var harmony = new Harmony(HarmonyId);
-            harmony.PatchAll(typeof(Patcher).Assembly);
+            harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
 
         public static void UnpatchAll()
