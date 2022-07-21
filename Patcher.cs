@@ -1,13 +1,9 @@
-﻿using ColossalFramework;
-using ColossalFramework.Globalization;
+﻿using ColossalFramework.Globalization;
 using ColossalFramework.UI;
 using HarmonyLib;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using UnityEngine;
+using CitiesHarmony.API;
+//using UnityEngine;
 
 namespace TollPriceIncreaserMod
 {
@@ -19,12 +15,23 @@ namespace TollPriceIncreaserMod
         public static void PatchAll()
         {
             if (patched) return;
+            if (!HarmonyHelper.IsHarmonyInstalled) return;
 
-            patched = true;
-            Debug.Log("TollPriceIncreaser Patching");
+                
+            UnityEngine.Debug.Log("TollPriceIncreaser Patching");
             var harmony = new Harmony(HarmonyId);
             //harmony.PatchAll(Assembly.GetExecutingAssembly());
             harmony.PatchAll(typeof(Patcher).GetType().Assembly);
+            //harmony.Patch(MethodBase(TollBoothAI.GetTollPrice), TollBoothAIGetTollPricePatch.Prefix);
+            
+            var patchedMeths = harmony.GetPatchedMethods();
+            foreach (var method in patchedMeths)
+            {
+                UnityEngine.Debug.Log("TollPriceIncreaser has patched: " + method.ToString());
+                UnityEngine.Debug.Log("TollPriceIncreaser has patched: " + method.Name);
+            }
+            UnityEngine.Debug.Log("TollPriceIncreaser has patched + " + patchedMeths.Count() + " methods");
+            patched = true;
         }
 
         public static void UnpatchAll()
@@ -52,7 +59,7 @@ namespace TollPriceIncreaserMod
     {
         public static bool Prefix(ushort buildingID, ref Building data, int price)
         {
-            data.m_education1 = (byte)Mathf.Clamp(price, 0, 255);
+            data.m_education1 = (byte)UnityEngine.Mathf.Clamp(price, 0, 255);
             return false;
         }
     }

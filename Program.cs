@@ -1,6 +1,4 @@
 ﻿using ICities;
-using ColossalFramework;
-using ColossalFramework.UI;
 using CitiesHarmony.API;
 
 namespace TollPriceIncreaserMod
