@@ -1,12 +1,6 @@
-﻿using ColossalFramework;
-using ColossalFramework.Globalization;
+﻿using ColossalFramework.Globalization;
 using ColossalFramework.UI;
 using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using UnityEngine;
 
 namespace TollPriceIncreaserMod
@@ -14,26 +8,25 @@ namespace TollPriceIncreaserMod
     public static class Patcher
     {
         private const string HarmonyId = "RCK.TollPriceIncreaserMod";
-        private static bool patched = false;
+        private static bool _patched = false;
 
         public static void PatchAll()
         {
-            if (patched) return;
+            if (_patched) return;
 
-            patched = true;
+            _patched = true;
             Debug.Log("TollPriceIncreaser Patching");
             var harmony = new Harmony(HarmonyId);
-            //harmony.PatchAll(Assembly.GetExecutingAssembly());
-            harmony.PatchAll(typeof(Patcher).GetType().Assembly);
+            harmony.PatchAll(typeof(Patcher).Assembly);
         }
 
         public static void UnpatchAll()
         {
-            if (!patched) return;
+            if (!_patched) return;
 
             var harmony = new Harmony(HarmonyId);
             harmony.UnpatchAll(HarmonyId);
-            patched = false;
+            _patched = false;
         }
     }
 
@@ -42,17 +35,18 @@ namespace TollPriceIncreaserMod
     {
         public static bool Prefix(ref int __result, ushort buildingID, ref Building data)
         {
-            __result = data.m_education1;
+            __result = data.m_education1 * 10;
             return false;
         }
     }
 
     [HarmonyPatch(typeof(TollBoothAI), "SetTollPrice")]
-    public static class TollBoothAIGSetTollPricePatch
+    public static class TollBoothAISetTollPricePatch
     {
         public static bool Prefix(ushort buildingID, ref Building data, int price)
         {
-            data.m_education1 = (byte)Mathf.Clamp(price, 0, 255);
+            int stored = Mathf.Clamp(price / 10, 0, 255);
+            data.m_education1 = (byte)stored;
             return false;
         }
     }
